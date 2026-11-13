@@ -18,19 +18,14 @@ class MovieSearchTab extends StatefulWidget {
 class _MovieSearchTabState extends State<MovieSearchTab> {
   late OmdbApi _api;
   final TextEditingController _searchController = TextEditingController();
-  final TextEditingController _keyInputController = TextEditingController();
   Timer? _debounce;
   Future<List<Movie>>? _results;
-  String _customKey = '';
 
   @override
   void initState() {
     super.initState();
     _api = widget.api ?? OmdbApi();
   }
-
-  bool get _hasKey =>
-      _api.hasKey || _customKey.isNotEmpty || omdbKey.isNotEmpty;
 
   void _performSearch(String text) {
     _debounce?.cancel();
@@ -78,89 +73,11 @@ class _MovieSearchTabState extends State<MovieSearchTab> {
   void dispose() {
     _debounce?.cancel();
     _searchController.dispose();
-    _keyInputController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!_hasKey) {
-      return Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.vpn_key_outlined,
-                size: 64,
-                color: Colors.orange,
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'OMDb API Key Missing',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'To search movies, pass your free OMDb API key when launching the app:',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey),
-              ),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const SelectableText(
-                  'flutter run --dart-define=OMDB_KEY=your_key',
-                  style: TextStyle(
-                    fontFamily: 'monospace',
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-              const Text('Or enter a temporary key below:'),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _keyInputController,
-                      decoration: const InputDecoration(
-                        hintText: 'Paste your OMDb key here',
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 10,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  FilledButton(
-                    onPressed: () {
-                      final key = _keyInputController.text.trim();
-                      if (key.isNotEmpty) {
-                        setState(() {
-                          _customKey = key;
-                          _api = OmdbApi(apiKey: key);
-                        });
-                      }
-                    },
-                    child: const Text('Save'),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
     return Column(
       children: [
         Padding(
