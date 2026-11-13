@@ -28,13 +28,18 @@ jobs:
       - run: flutter pub get
       - run: flutter test
       - name: Build the web app
-        run: >-
-          flutter build web --release
-          --base-href "/${{ github.event.repository.name }}/"
-          --dart-define=OMDB_KEY=${{ secrets.OMDB_KEY }}
-          --dart-define=CMS_SPACE_ID=${{ vars.CMS_SPACE_ID }}
-          --dart-define=CMS_TOKEN=${{ secrets.CMS_TOKEN }}
-          --dart-define=CMS_ENV=${{ vars.CMS_ENV }}
+        env:
+          OMDB_KEY: ${{ secrets.OMDB_KEY }}
+          CMS_SPACE_ID: ${{ vars.CMS_SPACE_ID }}
+          CMS_TOKEN: ${{ secrets.CMS_TOKEN }}
+          CMS_ENV: ${{ vars.CMS_ENV }}
+        run: |
+          flutter build web --release \
+            --base-href "/${{ github.event.repository.name }}/" \
+            "--dart-define=OMDB_KEY=$OMDB_KEY" \
+            "--dart-define=CMS_SPACE_ID=$CMS_SPACE_ID" \
+            "--dart-define=CMS_TOKEN=$CMS_TOKEN" \
+            "--dart-define=CMS_ENV=$CMS_ENV"
       - uses: actions/upload-pages-artifact@v3
         with:
           path: build/web
