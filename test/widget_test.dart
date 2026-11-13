@@ -5,12 +5,20 @@ import 'package:tamano_unit8_exercise/main.dart';
 import 'package:tamano_unit8_exercise/models/book.dart';
 import 'package:tamano_unit8_exercise/models/movie.dart';
 import 'package:tamano_unit8_exercise/models/pick.dart';
+import 'package:tamano_unit8_exercise/services/omdb_api.dart';
 import 'package:tamano_unit8_exercise/screens/book_search_tab.dart';
 import 'package:tamano_unit8_exercise/screens/movie_search_tab.dart';
 import 'package:tamano_unit8_exercise/screens/my_picks_tab.dart';
 import 'package:tamano_unit8_exercise/screens/shelf_screen.dart';
 
 void main() {
+  test('OMDb API accepts a full API URL', () {
+    final api = OmdbApi(
+      apiKey: 'http://www.omdbapi.com/?i=tt3896198&apikey=test-key',
+    );
+    expect(api.apiKey, equals('test-key'));
+  });
+
   testWidgets(
     'Unit 7 Exercise: Profile, Pet, Gallery, Shelf, and Tab navigation test',
     (WidgetTester tester) async {

@@ -12,8 +12,23 @@ class OmdbApi {
   final http.Client _client;
 
   OmdbApi({String? apiKey, http.Client? client})
-    : apiKey = (apiKey != null && apiKey.isNotEmpty) ? apiKey : omdbKey,
+    : apiKey = _normalizeKey(
+        (apiKey != null && apiKey.isNotEmpty) ? apiKey : omdbKey,
+      ),
       _client = client ?? http.Client();
+
+  static String _normalizeKey(String value) {
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) return '';
+
+    final uri = Uri.tryParse(trimmed);
+    final fromQuery = uri?.queryParameters['apikey'];
+    if (fromQuery != null && fromQuery.isNotEmpty) {
+      return fromQuery.trim();
+    }
+
+    return trimmed;
+  }
 
   bool get hasKey => apiKey.trim().isNotEmpty;
 
